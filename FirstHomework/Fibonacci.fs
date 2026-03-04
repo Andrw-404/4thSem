@@ -6,4 +6,4 @@ let fibonacci n =
         | 0 -> a
         | _ -> loop (current - 1) b (a + b)
 
-    if n < 0 then None else Some(loop n 0 1)
+    if n < 0 then None else Some(loop n 0 1);;
