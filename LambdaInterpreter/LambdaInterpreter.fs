@@ -39,19 +39,19 @@ let rec substitute nameToFind replacement target =
             LambdaAbstraction(argumentName, substitute nameToFind replacement body)
 
 let rec doOneStepBetaTransformation term =
-    match term with 
-    | Application (LambdaAbstraction (argumentName, body), argument) -> Some (substitute argumentName argument body)
-    | Application (left, right) -> 
+    match term with
+    | Application (LambdaAbstraction (argumentName, body), argument) -> Some(substitute argumentName argument body)
+    | Application (left, right) ->
         match doOneStepBetaTransformation left with
-        | Some newLeft -> Some (Application (newLeft, right))
+        | Some newLeft -> Some(Application(newLeft, right))
         | None ->
             match doOneStepBetaTransformation right with
-            | Some newRight -> Some (Application (left, newRight))
+            | Some newRight -> Some(Application(left, newRight))
             | None -> None
     | LambdaAbstraction (argumentName, body) ->
-            match doOneStepBetaTransformation body with
-            | Some newBody -> Some (LambdaAbstraction (argumentName, newBody))
-            | None -> None 
+        match doOneStepBetaTransformation body with
+        | Some newBody -> Some(LambdaAbstraction(argumentName, newBody))
+        | None -> None
     | Variable _ -> None
 
 let rec evaluate term =
@@ -61,7 +61,7 @@ let rec evaluate term =
 
 [<EntryPoint>]
 let main argv =
-    let example = Application(LambdaAbstraction ("x", Variable "x"), Variable "y")
+    let example = Application(LambdaAbstraction("x", Variable "x"), Variable "y")
     printfn "Исходное выражение: %A" example
 
     let result = evaluate example
