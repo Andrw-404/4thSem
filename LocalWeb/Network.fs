@@ -10,34 +10,54 @@ type Network(initialComputers: list<Computer>, connections: list<Connection>, pr
         |> List.map (fun pc -> pc.Id, pc)
         |> Map.ofList
 
-    let getNeighbors (id: string) =
+    let addEdge m a b =
+        let m1 =
+            let tail = Map.tryFind a m |> Option.defaultValue []
+            Map.add a (b :: tail) m
+
+        let tailB = Map.tryFind b m1 |> Option.defaultValue []
+        Map.add b (a :: tailB) m1
+
+    let neighborsById =
         connections
-        |> List.choose (fun (a, b) ->
-            if a = id then Some b
-            elif b = id then Some a
-            else None)
+        |> List.fold (fun m (a, b) -> addEdge m a b) Map.empty
+
+    let neighborsOf (id: string) =
+        Map.tryFind id neighborsById
+        |> Option.defaultValue []
+
+    let mutable frontier =
+        initialComputers
+        |> List.filter (fun c -> c.IsInfected)
+        |> List.map (fun c -> c.Id)
+        |> Set.ofList
 
     member this.Computers = currentComputers.Values |> Seq.toList
 
     member this.Step() =
-        let sickPC =
-            currentComputers.Values
-            |> Seq.filter (fun c -> c.IsInfected)
+        if Set.isEmpty frontier then
+            false
+        else
+            let newInfected =
+                frontier
+                |> Seq.collect neighborsOf
+                |> Seq.distinct
+                |> Seq.choose (fun id ->
+                    let pc = currentComputers.[id]
 
-        let NeighborsAtRisk = 
-            sickPC
-            |> Seq.collect (fun c -> getNeighbors c.Id)
-            |> Seq.distinct
-            |> Seq.map (fun id -> currentComputers.[id])
-            |> Seq.filter (fun c -> not c.IsInfected)
+                    if not pc.IsInfected
+                       && probability pc.OS.InfectionProbability then
+                        Some pc
+                    else
+                        None)
+                |> Seq.toList
 
-        let newInfected = 
-            NeighborsAtRisk 
-            |> Seq.filter (fun pc -> probability(pc.OS.InfectionProbability)) 
-            |> Seq.toList
+            for pc in newInfected do
+                currentComputers <- currentComputers.Add(pc.Id, pc.Infect())
 
-        for pc in newInfected do 
-            let sickPC = pc.Infect()
-            currentComputers <- currentComputers.Add(pc.Id, sickPC)
+            frontier <-
+                newInfected
+                |> List.map (fun c -> c.Id)
+                |> Set.ofList
 
-        not (List.isEmpty newInfected)
+            not (List.isEmpty newInfected)
