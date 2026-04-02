@@ -1,4 +1,4 @@
-﻿module firstTask.Tests
+﻿module findMinValueTask.Tests
 
 open FirstTask
 open FsUnit
