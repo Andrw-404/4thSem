@@ -34,7 +34,7 @@ let getHtml (url: string) =
 /// found inside the href attributes of <a> tags.
 /// </returns>
 let findChildAddress (htmlText: string) =
-    let pattern = @"<a\s+href\s*=\s*""(https://[^""]+)"""
+    let pattern = @"<a\s+href\s*=\s*""(https?://[^""]+)"""
     let regex = Regex(pattern, RegexOptions.IgnoreCase)
 
     regex.Matches(htmlText)
