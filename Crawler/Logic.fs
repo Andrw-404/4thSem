@@ -45,21 +45,22 @@ let findChildAddress (htmlText: string) =
 
 /// <summary>
 /// The main coordinator function. Downloads the start page, extracts child links, 
-/// and then asynchronously downloads all child pages in parallel, 
-/// printing their sizes to the console.
+/// and then asynchronously downloads all child pages in parallel.
 /// </summary>
 /// <param name="startUrl">The address of the initial page to start crawling from.</param>
-/// <returns>An Async workflow representing the execution of the crawling process.
+/// <returns>
+/// An Async workflow that resolves to an Option. 
+/// If successful, returns Some containing a tuple: (StartPageSize, List of (ChildUrl, ChildSizeOption)).
+/// If the start page fails to download, returns None.
 /// </returns>
 let analyze (startUrl: string) =
     async {
         let! startPage = getHtml startUrl
 
         match startPage with
-        | None -> printfn "Не удалось скачать стартовую страницу"
+        | None -> return None
         | Some html ->
-            printfn "Стартовая страница"
-            printfn "%s - %d" startUrl html.Length
+            let startSize = html.Length
             let links = findChildAddress html
 
             let tasks =
@@ -67,13 +68,32 @@ let analyze (startUrl: string) =
                 |> Seq.map (fun url ->
                     async {
                         let! htmlOption = getHtml url
-                        return (url, htmlOption)
+                        let childSize = 
+                            match htmlOption with 
+                            | Some c -> Some c.Length
+                            | _ -> None
+                        return (url, childSize)
                     })
 
             let! results = Async.Parallel tasks
 
-            for (url, contentOption) in results do
-                match contentOption with
-                | Some contentText -> printfn "%s - %d" url contentText.Length
-                | None -> printfn "%s - Ошибка скачивания" url
+            return Some (startSize, Array.toList results)
     }
+
+/// <summary>
+/// Presents the crawling results by printing them to the console in a human-readable format.
+/// </summary>
+/// <param name="start">The URL of the start page.</param>
+/// <param name="data">The structured data returned by the analyze function.</param>
+let printResults (start: string) (data: (int * (string * int option) list) option) =
+    match data with 
+    | None -> printfn "Не удалось скачать стартовую страницу %s" start
+    | Some (startSize, childResults) ->
+        printfn "Стартовая страница"
+        printfn "%s - %d" start startSize
+        printfn "\nДочерние страницы:"
+
+        for (url, sizeOption) in childResults do  
+            match sizeOption with
+            | Some size -> printfn "%s - %d" url size
+            | None -> printfn "%s - ошибка скачивания" url

@@ -5,8 +5,9 @@ open System
 let main argv =
     let testUrl = "https://math.spbu.ru/rus/"
 
-    Crawler.analyze testUrl |> Async.RunSynchronously
+    let crawlerResult = Crawler.analyze testUrl |> Async.RunSynchronously
 
+    Crawler.printResults testUrl crawlerResult
     printfn "\nНажмите любую клавишу для выхода..."
     Console.ReadKey() |> ignore
     0
