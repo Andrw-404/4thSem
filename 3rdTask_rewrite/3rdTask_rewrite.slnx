@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="3rdTask_rewrite.fsproj" />
+  <Project Path="BlockingQueue.Tests/BlockingQueue.Tests.fsproj" />
+</Solution>
