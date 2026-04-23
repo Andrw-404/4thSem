@@ -1,0 +1,38 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+\usepackage[russian]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+\section{Грамматика}
+
+\begin{verbatim}
+character = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
+
+digit = "0" | "1" | ... | "9" ;
+
+identifier = character , { character | digit | "_" } ;
+
+program = term | let_binding , program ;
+
+let_binding = "let" , identifier , "=" , term ;
+
+term = lambda_expr | application ;
+
+lambda_expr = "\" , id_list , "." , term ;
+
+id_list = identifier | identifier , id_list ;
+
+application = atom | atom , atom_list ;
+
+atom_list = atom | atom , atom_list ;
+
+atom = identifier | "(" , term , ")" ;
+\end{verbatim}
+
+\end{document}
