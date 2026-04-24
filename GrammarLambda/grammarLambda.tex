@@ -12,27 +12,75 @@
 \section{Грамматика}
 
 \begin{verbatim}
-character = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
+letter = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
 
 digit = "0" | "1" | ... | "9" ;
 
-identifier = character , { character | digit | "_" } ;
+newline = "\n" ;
 
-program = term | let_binding , program ;
+identifier = letter | letter , id_tail ;
 
-let_binding = "let" , identifier , "=" , term ;
+id_tail = symbol | symbol , id_tail ;
 
-term = lambda_expr | application ;
+symbol = letter | digit | "_" ;
+
+program = let_block, term | term ;
+
+let_block = let_binding | let_binding , let_block ;
+
+let_binding = "let" , identifier , "=" , term , newline ;
+
+term = lambda_expr | unit_sequence ;
+
+unit_sequence = unit | unit , unit_sequence ;
 
 lambda_expr = "\" , id_list , "." , term ;
 
 id_list = identifier | identifier , id_list ;
 
-application = atom | atom , atom_list ;
+unit = identifier | "(" , term , ")" ;
+\end{verbatim}
 
-atom_list = atom | atom , atom_list ;
+\section{Пример1}
 
-atom = identifier | "(" , term , ")" ;
+\begin{verbatim}
+\x y.x
+
+1. program -> term
+2. term -> lambda_expr
+3. lambda_expr -> "\" , id_list , "." , term
+4. id_list -> identifier(x) , id_list
+5. id_list -> identifier(y)
+6. term -> unit_sequence
+7. unit_sequence -> unit
+8. unit -> identifier(x)
+
+\x y.x
+\end{verbatim}
+
+\section{Пример2}
+
+\begin{verbatim}
+let I = \x.x
+I z
+
+1. program -> let_block , term
+2. let_block -> let_binding 
+3. let_binding -> "let" , identifier(I) , "=" , term , newline
+4. term -> lambda_expr
+5. lambda_expr -> "\" , id_list , "." , term 
+6. id_list -> identifier(x)
+7. term -> unit_sequence
+8. unit_sequence -> unit
+9. unit -> identifier(x)
+10. newline -> "\n"
+11. term -> unit_sequence
+12. unit_sequence -> unit , unit_sequence
+13. unit -> identifier(I)
+14. unit_sequence -> unit
+15. unit -> identifier(z)
+
+let I = \x.x \n I z
 \end{verbatim}
 
 \end{document}
