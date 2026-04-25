@@ -12,12 +12,13 @@ type OS =
         | Linux -> 0.3
         | MacOS -> 0.2
 
-type Computer =
-    { Id: string
-      OS: OS
-      IsInfected: bool }
-    member this.Infect() =
-        if this.IsInfected then
-            this
-        else
-            { this with IsInfected = true }
+type Computer(id: string, os: OS, isInfected: bool) =
+    let mutable _isInfected = isInfected
+    member this.Id = id
+    member this.OS = os
+
+    member this.IsInfected
+        with get () = _isInfected
+        and set (x) = _isInfected <- x
+
+    member this.Infect() = this.IsInfected <- true

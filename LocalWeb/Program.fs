@@ -2,60 +2,46 @@
 open Network
 open System
 
-[<EntryPoint>]
-let main argv =
-    let computers =
-        [ { Id = "PC1"
-            OS = Windows
-            IsInfected = false}
-          { Id = "PC2"
-            OS = MacOS
-            IsInfected = true }
-          { Id = "PC3"
-            OS = Linux
-            IsInfected = false }
-          { Id = "PC4"
-            OS = Windows
-            IsInfected = false }
-          { Id = "PC5"
-            OS = Linux
-            IsInfected = false } ]
+let pc1 = Computer("PC1", Windows, false)
+let pc2 = Computer("PC2", MacOS, true)
+let pc3 = Computer("PC3", Linux, false)
+let pc4 = Computer("PC4", Windows, false)
+let pc5 = Computer("PC5", Linux, false)
 
-    let connections =
-        [ ("PC1", "PC2")
-          ("PC1", "PC4")
-          ("PC4", "PC3")
-          ("PC4", "PC5") ]
+let computers = [ pc1; pc2; pc3; pc4; pc5 ]
 
-    let rand = Random()
-    let checkProbability (p: float) = rand.NextDouble() <= p
-    let network = Network(computers, connections, checkProbability)
+let connections =
+    [ (pc1, pc2)
+      (pc1, pc4)
+      (pc4, pc3)
+      (pc4, pc5) ]
 
-    let printCurrentState () =
-        for item in network.Computers do
-            printfn
-                "Компьютер %s: %s"
-                item.Id
-                (if item.IsInfected then
-                     "Заражен"
-                 else
-                     "Не заражен")
+let rand = Random()
+let checkProbability (p: float) = rand.NextDouble() <= p
+let network = Network(computers, connections, checkProbability)
 
-        printfn "\n"
+let printCurrentState () =
+    for item in network.Computers do
+        printfn
+            "Компьютер %s: %s"
+            item.Id
+            (if item.IsInfected then
+                 "Заражен"
+             else
+                 "Не заражен")
 
-    printfn "Начальное состояние"
+    printfn "\n"
+
+printfn "Начальное состояние"
+printCurrentState ()
+
+let mutable turn = 1
+
+while network.CanStateChange do
+    network.Step() |> ignore
+
+    printfn "Состояние после %d хода" turn
     printCurrentState ()
+    turn <- turn + 1
 
-    let mutable turn = 1
-    let mutable hasChanges = true
-
-    while hasChanges do
-        hasChanges <- network.Step()
-
-        if hasChanges then
-            printfn "Состояние после %d хода" turn
-            printCurrentState()
-            turn <- turn + 1
-
-    printf "Эпидемия закончилась"
-    0
+printf "Эпидемия закончилась"
