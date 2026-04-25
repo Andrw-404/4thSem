@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="NumberOfDegrees.fs" />
+    <Compile Include="NumberSearch.fs" />
+    <Compile Include="ListConversion.fs" />
     <Compile Include="Fibonacci.fs" />
     <Compile Include="Factorial.fs" />
   </ItemGroup>
