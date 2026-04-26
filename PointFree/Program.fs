@@ -1,9 +1,9 @@
 ﻿module PointFree.task
 
-let func0 x l = List.map (fun y -> y * x) l
-let func1 (x: int) : (int list -> int list) = List.map (fun y -> y * x)
-let func2 (x: int) : (int list -> int list) = List.map (fun y -> x * y)
-let func3 (x: int) : (int list -> int list) = List.map (fun y -> (*) x y)
-let func4 (x: int) : (int list -> int list) = List.map ((*) x)
-let func5 (x: int) : (int list -> int list) = (List.map << (*)) x
-let func6: int -> int list -> int list = List.map << (*)
+let multiplyOrig x l = List.map (fun y -> y * x) l
+let multiplyEtaReduced x = List.map (fun y -> y * x)
+let multiplyCommuted x = List.map (fun y -> x * y)
+let multiplyPrefix x = List.map (fun y -> (*) x y)
+let multiplyCurried x = List.map ((*) x)
+let multiplyComposedWithX x = (List.map << (*)) x
+let multiplyPointFree = List.map << (*)
