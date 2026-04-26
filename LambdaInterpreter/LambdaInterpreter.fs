@@ -13,30 +13,34 @@ let rec findFV term =
 
 let rec getNewName name usedName =
     if Set.contains name usedName then
-        getNewName (name + "1") usedName
+        getNewName (name + "'") usedName
     else
         name
 
 let rec substitute nameToFind replacement target =
     match target with
     | Variable foundName when foundName = nameToFind -> replacement
-    | Variable foundName -> Variable foundName
+    | Variable _ -> target
     | Application (left, right) ->
         Application(substitute nameToFind replacement left, substitute nameToFind replacement right)
-    | LambdaAbstraction (argumentName, body) when argumentName = nameToFind -> LambdaAbstraction(argumentName, body)
+    | LambdaAbstraction (argumentName, _) when argumentName = nameToFind -> target
     | LambdaAbstraction (argumentName, body) ->
-        let fvReplacement = findFV replacement
+        let fvBody = findFV body
 
-        if Set.contains argumentName fvReplacement then
-            let fvBody = findFV body
-            let forbiddenNames = Set.union fvReplacement fvBody
-            let newName = getNewName argumentName forbiddenNames
-
-            let alphaConvertBody = substitute argumentName (Variable newName) body
-
-            LambdaAbstraction(newName, substitute nameToFind replacement alphaConvertBody)
+        if not (Set.contains nameToFind fvBody) then
+            target
         else
-            LambdaAbstraction(argumentName, substitute nameToFind replacement body)
+            let fvReplacement = findFV replacement
+
+            if Set.contains argumentName fvReplacement then
+                let forbiddenNames = Set.union fvReplacement fvBody
+                let newName = getNewName argumentName forbiddenNames
+
+                let alphaConvertBody = substitute argumentName (Variable newName) body
+
+                LambdaAbstraction(newName, substitute nameToFind replacement alphaConvertBody)
+            else
+                LambdaAbstraction(argumentName, substitute nameToFind replacement body)
 
 let rec doOneStepBetaTransformation term =
     match term with
@@ -54,17 +58,10 @@ let rec doOneStepBetaTransformation term =
         | None -> None
     | Variable _ -> None
 
-let rec evaluate term =
-    match doOneStepBetaTransformation term with
-    | Some nextStepTerm -> evaluate nextStepTerm
-    | None -> term
-
-[<EntryPoint>]
-let main argv =
-    let example = Application(LambdaAbstraction("x", Variable "x"), Variable "y")
-    printfn "Исходное выражение: %A" example
-
-    let result = evaluate example
-    printfn "result %A" result
-
-    0
+let rec evaluate maxSteps term =
+    if maxSteps <= 0 then
+        term
+    else
+        match doOneStepBetaTransformation term with
+        | Some nextStepTerm -> evaluate (maxSteps - 1) nextStepTerm
+        | None -> term
