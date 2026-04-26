@@ -4,13 +4,15 @@
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
-    <GenerateProgramFile>false</GenerateProgramFile>
+    <GenerateProgramFile>true</GenerateProgramFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="NumberOfDegreesTests.fs" />
+    <Compile Include="NumberSearchTests.fs" />
+    <Compile Include="ListConversionTests.fs" />
     <Compile Include="FibonacciTest.fs" />
     <Compile Include="FactorialTest.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>

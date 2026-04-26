@@ -1,9 +1,10 @@
-module NumberofDegrees
+module NumberOfDegrees
 
-let generatePowers n m = 
-    if m<0 then []
+let generatePowers n m =
+    if m < 0 then
+        []
     else
-        let rec loop count currentValue acc = 
+        let rec loop count currentValue acc =
             if count > m then
                 List.rev acc
             else
