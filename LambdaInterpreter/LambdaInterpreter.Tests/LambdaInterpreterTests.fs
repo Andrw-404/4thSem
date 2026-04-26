@@ -26,7 +26,7 @@ let ``Substitute в выражении (x y) замена y на z дает (x z
 let ``Substitute альфа-преобразование корректно обрабатывает зависимую переменную`` () =
     let term = LambdaAbstraction("x", Variable "y")
     let replacement = Variable "x"
-    let expected = LambdaAbstraction("x1", Variable "x")
+    let expected = LambdaAbstraction("x'", Variable "x")
 
     substitute "y" replacement term
     |> should equal expected
@@ -34,7 +34,7 @@ let ``Substitute альфа-преобразование корректно об
 [<Test>]
 let ``Evaluate (λx.x)y дает y`` () =
     let term = Application(LambdaAbstraction("x", Variable "x"), Variable "y")
-    evaluate term |> should equal (Variable "y")
+    evaluate 1000 term |> should equal (Variable "y")
 
 [<Test>]
 let ``Evaluate использует нормальную стратегию для обработки сложных выражений`` () =
@@ -43,4 +43,4 @@ let ``Evaluate использует нормальную стратегию дл
 
     let monster = Application(tripleX, tripleX)
     let term = Application(LambdaAbstraction("x", Variable "y"), monster)
-    evaluate term |> should equal (Variable "y")
+    evaluate 1000 term |> should equal (Variable "y")
