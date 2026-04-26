@@ -5,8 +5,13 @@
 \begin{document}
 
 \begin{align*}
-(SKK)x &= (\lambda x y z.x z (y z)) K K x = Kx (Kx) = (\lambda x y.x)x (Kx) \\
-&= x = (\lambda x.x)x = Ix  \implies (SKK) = I
+S K K 
+&= ((\lambda x y z. x z (y z)) K) K \\
+&\to_\beta (\lambda y z. K z (y z)) K \\
+&\to_\beta \lambda z. K z (K z) \\
+&= \lambda z. (\lambda x y. x) z (K z) \\
+&\to_\beta \lambda z. z \\
+&= I
 \end{align*}
 
 \end{document}
