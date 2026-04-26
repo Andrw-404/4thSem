@@ -2,14 +2,17 @@
 open PhoneDirectory.Logic
 open PhoneDirectory.FileLogic
 
-let reader request =
+let rec reader request =
     printf "%s" request
 
     match Console.ReadLine() with
-    | null -> ""
+    | null
+    | "" ->
+        printfn "Ввод не может быть пустым"
+        reader request
     | s -> s.Trim()
 
-let rec mainLoop (db: (string * string) list) =
+let rec mainLoop (db: PhoneBook) =
     printfn "\n1. Показать всё"
     printfn "2. Добавить запись (имя и телефон)"
     printfn "3. Найти телефон по имени"
@@ -20,90 +23,62 @@ let rec mainLoop (db: (string * string) list) =
 
     match reader "\nВыберите действие: " with
     | "1" ->
-        match db with
-        | [] -> printfn "Список контактов пуст"
-        | _ ->
-            db
-            |> List.iter (fun (name, phone) -> printfn "%s: %s" name phone)
-
+        printfn "%s" (formatContacts db)
         mainLoop db
 
     | "2" ->
-        match reader "Имя: " with
-        | "" ->
-            printfn "Имя не указано"
+        let name = reader "Имя: "
+        let phone = reader "Телефон: "
+
+        match add name phone db with
+        | Ok newDb ->
+            printfn "Контакт добавлен"
+            mainLoop newDb
+        | Error err ->
+            printfn "Ошибка: %s" err
             mainLoop db
-        | name ->
-            match reader "Телефон: " with
-            | "" ->
-                printfn "Телефон не указан"
-                mainLoop db
-            | phone ->
-                match add name phone db with
-                | Ok newDb ->
-                    printfn "Контакт добавлен"
-                    mainLoop newDb
-                | Error err ->
-                    printfn "Ошибка: %s" err
-                    mainLoop db
 
     | "3" ->
-        match reader "Имя для поиска: " with
-        | "" ->
-            printfn "Имя не указано"
-            mainLoop db
-        | name ->
-            let results = findByName name db
+        let name = reader "Имя для поиска: "
 
-            if List.isEmpty results then
-                printfn "Не найдено"
-            else
-                results
-                |> List.iter (fun (_, phone) -> printfn "%s" phone)
+        match findByName name db with
+        | [] -> printfn "Не найдено"
+        | results ->
+            results
+            |> List.iter (fun { Phone = Phone p } -> printfn "%s" p)
 
-            mainLoop db
+        mainLoop db
 
     | "4" ->
-        match reader "Телефон для поиска: " with
-        | "" ->
-            printfn "Телефон не указан"
-            mainLoop db
-        | phone ->
-            let results = findByPhone phone db
+        let phone = reader "Телефон для поиска: "
 
-            if List.isEmpty results then
-                printfn "Не найдено"
-            else
-                results
-                |> List.iter (fun (name, _) -> printfn "%s" name)
+        match findByPhone phone db with
+        | [] -> printfn "Не найдено"
+        | results ->
+            results
+            |> List.iter (fun { Name = Name n } -> printfn "%s" n)
 
-            mainLoop db
+        mainLoop db
 
     | "5" ->
-        match reader "Путь для сохранения: " with
-        | "" ->
-            printfn "Путь не указан"
-            mainLoop db
-        | path ->
-            match save path db with
-            | Ok () -> printfn "Сохранено"
-            | Error err -> printfn "Ошибка при сохранении: %s" err
+        let path = reader "Путь для сохранения: "
 
-            mainLoop db
+        match save path db with
+        | Ok () -> printfn "Сохранено"
+        | Error err -> printfn "Ошибка при сохранении: %s" err
+
+        mainLoop db
 
     | "6" ->
-        match reader "Путь для загрузки: " with
-        | "" ->
-            printfn "Путь не указан"
+        let path = reader "Путь для загрузки: "
+
+        match load path with
+        | Ok newDb ->
+            printfn "Загружено"
+            mainLoop newDb
+        | Error err ->
+            printfn "Ошибка при загрузке: %s" err
             mainLoop db
-        | path ->
-            match load path with
-            | Ok newDb ->
-                printfn "Загружено"
-                mainLoop newDb
-            | Error err ->
-                printfn "Ошибка при загрузке: %s" err
-                mainLoop db
 
     | "7" -> printfn "Выход..."
 
@@ -111,8 +86,5 @@ let rec mainLoop (db: (string * string) list) =
         printfn "Неверный выбор, попробуйте снова"
         mainLoop db
 
-[<EntryPoint>]
-let main _argv =
-    printfn "Телефонный справочник"
-    mainLoop emptyData
-    0
+printfn "Телефонный справочник"
+mainLoop emptyData
