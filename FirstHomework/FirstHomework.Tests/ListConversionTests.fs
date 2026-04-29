@@ -17,3 +17,9 @@ let ``Обращение списка работает корректно`` () =
     let input = [1;2;3;4;5]
     let expected = [5;4;3;2;1]
     reverseList input |> should equal expected
+
+[<Test>]
+let ``Обращение списка работает корректно со списком строк`` () =
+    let input = ["abc";"zxc";"qwe";"qqw";"eeq"]
+    let expected = ["eeq"; "qqw"; "qwe"; "zxc"; "abc"]
+    reverseList input |> should equal expected

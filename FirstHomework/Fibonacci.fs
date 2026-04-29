@@ -1,9 +1,12 @@
 module FibonacciTask
 
 let fibonacci n =
-    let rec loop current a b =
+    let rec factorialHelper current prev curr =
         match current with
-        | 0 -> a
-        | _ -> loop (current - 1) b (a + b)
+        | 0 -> prev
+        | _ -> factorialHelper (current - 1) curr (prev + curr)
 
-    if n < 0 then None else Some(loop n 0 1)
+    if n < 0 then
+        None
+    else
+        Some(factorialHelper n 0 1)

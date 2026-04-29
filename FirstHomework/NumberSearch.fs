@@ -1,8 +1,8 @@
 module NumberSearch
 
 let findNumber target list =
-    let rec search index currentList =
-        match currentList with
+    let rec search index =
+        function
         | [] -> None
         | head :: _ when head = target -> Some index
         | _ :: tail -> search (index + 1) tail
