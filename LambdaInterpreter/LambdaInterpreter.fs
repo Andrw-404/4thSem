@@ -30,30 +30,30 @@ let rec substitute nameToFind replacement target =
         if not (Set.contains nameToFind fvBody) then
             target
         else
-            let fvReplacement = findFV replacement
+        let fvReplacement = findFV replacement
 
-            if Set.contains argumentName fvReplacement then
-                let forbiddenNames = Set.union fvReplacement fvBody
-                let newName = getNewName argumentName forbiddenNames
+        if Set.contains argumentName fvReplacement then
+            let forbiddenNames = Set.union fvReplacement fvBody
+            let newName = getNewName argumentName forbiddenNames
 
-                let alphaConvertBody = substitute argumentName (Variable newName) body
+            let alphaConvertBody = substitute argumentName (Variable newName) body
 
-                LambdaAbstraction(newName, substitute nameToFind replacement alphaConvertBody)
-            else
-                LambdaAbstraction(argumentName, substitute nameToFind replacement body)
+            LambdaAbstraction(newName, substitute nameToFind replacement alphaConvertBody)
+        else
+            LambdaAbstraction(argumentName, substitute nameToFind replacement body)
 
-let rec doOneStepBetaTransformation term =
+let rec doOneStepReduction term =
     match term with
     | Application (LambdaAbstraction (argumentName, body), argument) -> Some(substitute argumentName argument body)
     | Application (left, right) ->
-        match doOneStepBetaTransformation left with
+        match doOneStepReduction left with
         | Some newLeft -> Some(Application(newLeft, right))
         | None ->
-            match doOneStepBetaTransformation right with
+            match doOneStepReduction right with
             | Some newRight -> Some(Application(left, newRight))
             | None -> None
     | LambdaAbstraction (argumentName, body) ->
-        match doOneStepBetaTransformation body with
+        match doOneStepReduction body with
         | Some newBody -> Some(LambdaAbstraction(argumentName, newBody))
         | None -> None
     | Variable _ -> None
@@ -62,6 +62,6 @@ let rec evaluate maxSteps term =
     if maxSteps <= 0 then
         term
     else
-        match doOneStepBetaTransformation term with
+        match doOneStepReduction term with
         | Some nextStepTerm -> evaluate (maxSteps - 1) nextStepTerm
         | None -> term

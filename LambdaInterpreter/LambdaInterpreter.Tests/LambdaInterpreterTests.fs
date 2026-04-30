@@ -44,3 +44,12 @@ let ``Evaluate использует нормальную стратегию дл
     let monster = Application(tripleX, tripleX)
     let term = Application(LambdaAbstraction("x", Variable "y"), monster)
     evaluate 1000 term |> should equal (Variable "y")
+
+[<Test>]
+let ``Evaluate применение нескольких аргументов (каррирование): (λx.λy. x y) A B дает A B`` () =
+    let func =
+        LambdaAbstraction("x", LambdaAbstraction("y", Application(Variable "x", Variable "y")))
+
+    let term = Application(Application(func, Variable "A"), Variable "B")
+    let expected = Application(Variable "A", Variable "B")
+    evaluate 1000 term |> should equal expected
