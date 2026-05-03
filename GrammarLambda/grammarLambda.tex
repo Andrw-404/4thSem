@@ -24,63 +24,78 @@ id_tail = symbol | symbol , id_tail ;
 
 symbol = letter | digit | "_" ;
 
-program = let_block, term | term ;
+program = statement_list | ;
 
-let_block = let_binding | let_binding , let_block ;
+statement_list = statement | statement , statement_list ;
+
+statement = let_binding | term_stmt ;
+
+term_stmt = term , newline;
 
 let_binding = "let" , identifier , "=" , term , newline ;
 
-term = lambda_expr | unit_sequence ;
+term = lambda_expr | application ;
 
-unit_sequence = unit | unit , unit_sequence ;
+application = operand | operand , app_tail ;
+
+app_tail = operand | lambda_expr | operand , app_tail ;
 
 lambda_expr = "\" , id_list , "." , term ;
 
 id_list = identifier | identifier , id_list ;
 
-unit = identifier | "(" , term , ")" ;
+operand = identifier | "(" , term , ")" ;
 \end{verbatim}
 
 \section{Пример1}
 
 \begin{verbatim}
-\x y.x
+\x y.x \n
 
-1. program -> term
-2. term -> lambda_expr
-3. lambda_expr -> "\" , id_list , "." , term
-4. id_list -> identifier(x) , id_list
-5. id_list -> identifier(y)
-6. term -> unit_sequence
-7. unit_sequence -> unit
-8. unit -> identifier(x)
+1. program -> statement_list
+2. statement_list -> statement
+3. statement -> term_stmt
+4. term_stmt -> term , newline
+5. term -> lambda_expr
+6. lambda_expr -> "\" , id_list , "." , term
+7. id_list -> identifier(x) , id_list
+8. id_list -> identifier(y)
+9. term -> application
+10. application -> operand
+11. operand -> identifier(x)
+12. newline -> "\n"
 
-\x y.x
+\x y.x \n
 \end{verbatim}
 
 \section{Пример2}
 
 \begin{verbatim}
-let I = \x.x
-I z
+let I = \x.x \n
+I z \n
 
-1. program -> let_block , term
-2. let_block -> let_binding 
-3. let_binding -> "let" , identifier(I) , "=" , term , newline
-4. term -> lambda_expr
-5. lambda_expr -> "\" , id_list , "." , term 
-6. id_list -> identifier(x)
-7. term -> unit_sequence
-8. unit_sequence -> unit
-9. unit -> identifier(x)
-10. newline -> "\n"
-11. term -> unit_sequence
-12. unit_sequence -> unit , unit_sequence
-13. unit -> identifier(I)
-14. unit_sequence -> unit
-15. unit -> identifier(z)
+1. program -> statement_list
+2. statement_list -> statement , statement_list
+3. statement -> let_binding
+4. let_binding -> "let" , identifier(I) , "=" , term , newline
+5. term -> lambda_expr
+6. lambda_expr -> "\" , id_list , "." , term 
+7. id_list -> identifier(x)
+8. term -> application
+9. application -> operand
+10. operand -> identifier(x)
+11. newline -> "\n"
+12. statement_list -> statement
+13. statement -> term_stmt
+14. term_stmt -> term , newline
+15. term -> application
+16. application -> operand , app_tail
+17. operand -> identifier(I)
+18. app_tail -> operand
+19. operand -> identifier(z)
+20. newline -> "\n"
 
-let I = \x.x \n I z
+let I = \x.x \n I z \n
 \end{verbatim}
 
 \end{document}
