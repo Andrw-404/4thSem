@@ -1,0 +1,101 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+\usepackage[russian]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+\section{Грамматика}
+
+\begin{verbatim}
+letter = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
+
+digit = "0" | "1" | ... | "9" ;
+
+newline = "\n" ;
+
+identifier = letter | letter , id_tail ;
+
+id_tail = symbol | symbol , id_tail ;
+
+symbol = letter | digit | "_" ;
+
+program = statement_list | ;
+
+statement_list = statement | statement , statement_list ;
+
+statement = let_binding | term_stmt ;
+
+term_stmt = term , newline;
+
+let_binding = "let" , identifier , "=" , term , newline ;
+
+term = lambda_expr | application ;
+
+application = operand | operand , app_tail ;
+
+app_tail = operand | lambda_expr | operand , app_tail ;
+
+lambda_expr = "\" , id_list , "." , term ;
+
+id_list = identifier | identifier , id_list ;
+
+operand = identifier | "(" , term , ")" ;
+\end{verbatim}
+
+\section{Пример1}
+
+\begin{verbatim}
+\x y.x \n
+
+1. program -> statement_list
+2. statement_list -> statement
+3. statement -> term_stmt
+4. term_stmt -> term , newline
+5. term -> lambda_expr
+6. lambda_expr -> "\" , id_list , "." , term
+7. id_list -> identifier(x) , id_list
+8. id_list -> identifier(y)
+9. term -> application
+10. application -> operand
+11. operand -> identifier(x)
+12. newline -> "\n"
+
+\x y.x \n
+\end{verbatim}
+
+\section{Пример2}
+
+\begin{verbatim}
+let I = \x.x \n
+I z \n
+
+1. program -> statement_list
+2. statement_list -> statement , statement_list
+3. statement -> let_binding
+4. let_binding -> "let" , identifier(I) , "=" , term , newline
+5. term -> lambda_expr
+6. lambda_expr -> "\" , id_list , "." , term 
+7. id_list -> identifier(x)
+8. term -> application
+9. application -> operand
+10. operand -> identifier(x)
+11. newline -> "\n"
+12. statement_list -> statement
+13. statement -> term_stmt
+14. term_stmt -> term , newline
+15. term -> application
+16. application -> operand , app_tail
+17. operand -> identifier(I)
+18. app_tail -> operand
+19. operand -> identifier(z)
+20. newline -> "\n"
+
+let I = \x.x \n I z \n
+\end{verbatim}
+
+\end{document}
