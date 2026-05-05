@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PhoneDirectory.fsproj" />
+  <Project Path="PhoneDirectory.Tests/PhoneDirectory.Tests.fsproj" Id="2d514a7a-c49c-4016-8d3f-32feb931e148" />
+</Solution>
