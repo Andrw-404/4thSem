@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LocalWeb.fsproj" />
+  <Project Path="LocalWeb.Tests/LocalWeb.Tests.fsproj" Id="012576f9-da8f-4d89-a134-2b5ceaf7e7e9" />
+</Solution>
