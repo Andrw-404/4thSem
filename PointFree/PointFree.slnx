@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PointFree.fsproj" />
+  <Project Path="PointFree.Test/PointFree.Test.fsproj" Id="a3826c8b-7e2d-441a-9978-feac395039f2" />
+</Solution>
