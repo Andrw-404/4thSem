@@ -1,0 +1,17 @@
+\documentclass {article}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{align*}
+S K K 
+&= ((\lambda x y z. x z (y z)) K) K \\
+&\to_\beta (\lambda y z. K z (y z)) K \\
+&\to_\beta \lambda z. K z (K z) \\
+&= \lambda z. (\lambda x y. x) z (K z) \\
+&\to_\beta \lambda z. z \\
+&= I
+\end{align*}
+
+\end{document}
