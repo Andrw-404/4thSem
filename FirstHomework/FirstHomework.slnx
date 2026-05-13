@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FirstHomework.fsproj" />
+  <Project Path="FirstHomework.Tests/FirstHomework.Tests.fsproj" Id="19a926b9-2e4d-4e5a-8e3d-043a4883a66f" />
+</Solution>
