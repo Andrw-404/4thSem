@@ -1,0 +1,18 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage[russian]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=2cm]{geometry}
+
+\begin{document}
+$$
+\begin{aligned}
+&((\lambda a.(\lambda b. b~b)(\lambda b.b~b) ) b)((\lambda c.(c~b))(\lambda a.a)) \\
+&\to_\beta ((\lambda b. b~b)(\lambda b.b~b))((\lambda c.(c~b))(\lambda a.a)) \\
+&\to_\beta ((\lambda b. b~b)(\lambda b.b~b))((\lambda c.(c~b))(\lambda a.a))
+\end{aligned}
+$$
+Левая часть зациклилась и редуцировалась сама в себя. Следовательно, по теореме Карри о нормализации у данного $\lambda$-терма нет нормальной формы.
+\end{document}
