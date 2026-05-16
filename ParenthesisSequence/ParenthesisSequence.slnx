@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ParenthesisSequence.fsproj" />
+  <Project Path="ParenthesisSequence.Tests/ParenthesisSequence.Tests.fsproj" Id="add70c6e-4258-4c4b-bb61-c48668c95d0b" />
+</Solution>
