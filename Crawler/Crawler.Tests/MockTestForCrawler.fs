@@ -40,7 +40,7 @@ let ``analyze должен скачивать страницы и коррект
     let result = Crawler.analyze testUrl |> Async.RunSynchronously
 
     match result with
-    | None -> Assert.Fail("analyze returned None, when should successful downloading page")
+    | None -> Assert.Fail("analyze вернул None, когда должна быть успешно загружена страница")
 
     | Some (startSize, childResults) ->
         startSize |> should equal startHtml.Length
