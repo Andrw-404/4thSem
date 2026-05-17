@@ -30,10 +30,10 @@ let getHtml (url: string) =
 /// </summary>
 /// <param name="htmlText">HTML text of the web page.</param>
 /// <returns>
-/// A list of unique URL strings (strictly starting with https://) 
+/// A list of unique URL strings (strictly starting with https:// or http://) 
 /// found inside the href attributes of <a> tags.
 /// </returns>
-let findChildAddress (htmlText: string) =
+let findChildAddress htmlText =
     let pattern = @"<a\s+href\s*=\s*""(https?://[^""]+)"""
     let regex = Regex(pattern, RegexOptions.IgnoreCase)
 
@@ -53,7 +53,7 @@ let findChildAddress (htmlText: string) =
 /// If successful, returns Some containing a tuple: (StartPageSize, List of (ChildUrl, ChildSizeOption)).
 /// If the start page fails to download, returns None.
 /// </returns>
-let analyze (startUrl: string) =
+let analyze startUrl =
     async {
         let! startPage = getHtml startUrl
 
@@ -85,7 +85,7 @@ let analyze (startUrl: string) =
 /// </summary>
 /// <param name="start">The URL of the start page.</param>
 /// <param name="data">The structured data returned by the analyze function.</param>
-let printResults (start: string) (data: (int * (string * int option) list) option) =
+let printResults start data=
     match data with 
     | None -> printfn "Не удалось скачать стартовую страницу %s" start
     | Some (startSize, childResults) ->
