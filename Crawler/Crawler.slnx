@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Crawler.fsproj" />
+  <Project Path="Crawler.Tests/Crawler.Tests.fsproj" Id="f4af7cda-7aaa-4281-840a-1f60c465086e" />
+</Solution>
