@@ -13,6 +13,6 @@ type CalculateBuilder()=
         | Some num -> f num
         | None -> None
 
-    member this.Return(x) = Some x
+    member this.Return x = Some x
     
 let calculate = CalculateBuilder()

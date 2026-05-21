@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="RoundingBuilderTests.fs" />
     <Compile Include="StringCalculateBuilderTests.fs" />
   </ItemGroup>
 
