@@ -4,11 +4,6 @@ open System.Text.RegularExpressions
 open System.Net.Http
 
 /// <summary>
-/// A global HTTP client instance. Created once to reuse network connections and prevent socket exhaustion.
-/// </summary>
-let client = new HttpClient()
-
-/// <summary>
 /// Asynchronously downloads the HTML content from the specified URL.
 /// </summary>
 /// <param name="url">The target URL of the web page to download.</param>
@@ -16,7 +11,7 @@ let client = new HttpClient()
 /// Some containing the HTML string if successful, 
 /// or None if a network error occurs.
 /// </returns>
-let getHtml (url: string) =
+let getHtml (client: HttpClient ) (url: string) =
     async {
         try
             let! html = client.GetStringAsync(url) |> Async.AwaitTask
@@ -53,9 +48,9 @@ let findChildAddress htmlText =
 /// If successful, returns Some containing a tuple: (StartPageSize, List of (ChildUrl, ChildSizeOption)).
 /// If the start page fails to download, returns None.
 /// </returns>
-let analyze startUrl =
+let analyze (client: HttpClient) startUrl =
     async {
-        let! startPage = getHtml startUrl
+        let! startPage = getHtml client startUrl
 
         match startPage with
         | None -> return None
@@ -67,7 +62,7 @@ let analyze startUrl =
                 links
                 |> Seq.map (fun url ->
                     async {
-                        let! htmlOption = getHtml url
+                        let! htmlOption = getHtml client url
                         let childSize = 
                             match htmlOption with 
                             | Some c -> Some c.Length
